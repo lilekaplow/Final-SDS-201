@@ -8,27 +8,65 @@ library(dplyr)
 library(infer)
 library(moderndive)
 library(tidyverse)
+library(ggplot2)
+library(knitr)
 ```
 
 ```{r}
 coffee_data <- read.csv("https://wjhopper.github.io/SDS-201/data/coffee_ratings.csv")
 ```
 
-```{r}
-glimpse(coffee_data)
-```
 # Name?
 
 ## Introduction
 
-Coffee is a beloved drink all over the world. From late night diners to upscale cafes, coffee beverages are a staple in many cultures. Along with a wide range of 
+Coffee is a beloved drink all over the world. From late night diners to upscale cafes, coffee beverages are a staple in many cultures. Along with a wide range of
+
+
 ```{r}
-coffee_data |>
-  ggplot(data = coffee_data, mapping = aes(x= country_of_origin)) +
+coffee_clean <- coffee_data |>
+  select(country_of_origin, total_cup_points) |>
+  drop_na()
+
+kable(coffee_clean)
+```
+```{r}
+where_coffee <- coffee_data |>
+  ggplot(data = coffee_clean, mapping = aes(x= country_of_origin)) +
   geom_bar() +
   coord_flip()
+
+where_coffee
+```
+
+```{r}
+origin_coffee <- coffee_clean |>
+  group_by(country_of_origin) |>
+  summarize(top_countries = n()) |>
+  arrange(desc(top_countries))
+origin_coffee
+```
+```{r}
+top_5_coffee <- origin_coffee |>
+  filter(country_of_origin == "Mexico" ) 
+  
+top_5_coffee
+```
+```{r}
+vector_of_5 <- origin_coffee |>
+  c("Mexico", "Taiwan")
+vector_of_5
 ```
 
 
+```{r}
+ggplot(
+  data = coffee_clean,
+  mapping = aes(
+    x = total_cup_points,
+    fill = country_of_origin
+  )
+) + 
+  geom_boxplot()
+```
 
-          Hello
